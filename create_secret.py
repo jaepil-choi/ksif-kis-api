@@ -4,6 +4,7 @@ import os
 
 # Load environment variables from .env file
 load_dotenv()
+# print(os.getenv("REAL_ACC_NO"))
 
 auth = KisAuth(
     # HTS 로그인 ID
