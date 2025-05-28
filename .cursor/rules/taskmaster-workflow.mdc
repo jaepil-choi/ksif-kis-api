@@ -1,0 +1,32 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Enhanced Taskmaster-AI Workflow
+
+This rule defines a standardized workflow to be followed for every task when using Taskmaster-AI with Cursor. It ensures proper architecture understanding before implementation.
+
+## Pre-Implementation Hook (Before Starting a Task)
+
+Before starting work on any task with `set_task_status` to "in-progress", ALWAYS:
+
+1. **Read Architecture Documentation** by examining these files:
+   - Review all mermaid diagrams in `docs/vibe_docs/architecture/as-is/sysmacro4/`
+   - Read the diagnosis report in the same directory
+   - Understand the current structure of classes and packages in `src/sysmacro4/`
+
+2. **After** reading documentation, write a brief summary of the current architecture as it relates to the task
+
+## Implementation Phase
+
+- Proceed with standard task implementation as defined by Taskmaster-AI
+- Follow the task requirements, test strategy, and other guidance
+- Run tests and check implementation quality throughout development
+- Ensure code adheres to project architecture patterns
+- Verify all tests pass before completing the task
+- Update documentation if needed
+
+
+
+

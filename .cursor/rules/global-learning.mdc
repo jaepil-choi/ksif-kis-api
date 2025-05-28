@@ -1,0 +1,47 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Global Learning System
+
+This rule serves two essential purposes:
+
+1. **Reference Existing Knowledge**: Always check [what-i-learned.md](mdc:docs/implementation/what-i-learned.md) at the beginning of every conversation to prevent repeating documented mistakes.
+
+2. **Record New Learnings**: Proactively identify and document new learnings, mistakes, and useful facts discovered during conversations.
+
+## Always Reference What-I-Learned
+
+Before providing advice or making suggestions about:
+- Testing frameworks and approaches
+- Project structure and organization
+- Design patterns and architecture
+- Environment setup and configuration
+- Implementation details and best practices
+
+Check [what-i-learned.md](mdc:docs/implementation/what-i-learned.md) first to ensure recommendations align with established knowledge and avoid repeating documented mistakes.
+
+## Proactively Update What-I-Learned
+
+When to update the document:
+- When a user corrects a mistake in your advice or code
+- When discovering important technical facts about the codebase
+- When learning about environment-specific requirements
+- When identifying anti-patterns or best practices
+- When figuring out solutions to common problems
+- When terminal environment or tool usage guidelines change
+
+How to update the document:
+1. Identify the category for the new learning
+2. Format the learning as a clear, concise bullet point with necessary context
+3. Use bold text to highlight key terms
+4. Append the learning to the appropriate section in what-i-learned.md
+5. If no appropriate section exists, create a new one with a clear heading
+
+Format for new entries:
+```markdown
+## [Category Name]
+
+- **[Key concept]** [Concise explanation of the learning with necessary context]
+```

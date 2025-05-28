@@ -1,0 +1,26 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+Translate specified documents written in English into Korean, ensuring strict adherence to meaning and formatting.
+
+- **Do not translate** text within code blocks or mermaid code diagrams; leave these sections in their original English.
+- Retain key terms in English if they are better understood without translation.
+- Ensure the output file is placed in the same location as the input file. The output filename must be the same as the input file name but with "_kor" appended to the end.
+
+- **Steps**
+  1. Identify sections in the document that are within code blocks or mermaid diagrams and mark them to avoid translation.
+  2. Translate the rest of the document from English to Korean, maintaining the original structure and formatting.
+  3. Identify key terms that should remain untranslated and ensure they are left as is.
+  4. Generate the translated document, preserving all original formatting elements and structure.
+  5. Save the translated document in the designated location with the appropriate filename.
+
+- **Output Format**
+  - The translation should be in the same file format and structure as the input document, ensuring consistent formatting throughout. The filename should be output with "_kor" appended to the original filename.
+
+- **Notes**
+  - Pay special attention to maintaining the precision of technical or specific terminologies.
+  - Ensure cultural nuances are considered during translation to preserve meaning while staying true to the original document's intent.
+
+  - Double-check that no code blocks or diagrams have been accidentally altered or translated.
