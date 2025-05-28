@@ -1,0 +1,12 @@
+
+# Ignore SpecStory derived-cursor-rules.mdc backup files
+.specstory/cursor_rules_backups/*
+
+log/*
+data/*
+parquet_data/*
+
+*/wqops_docs_backup/*
+ERROR*.txt
+# SpecStory derived-cursor-rules.mdc backup files
+.specstory/ai_rules_backups/*
