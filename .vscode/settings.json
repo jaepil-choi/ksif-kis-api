@@ -24,6 +24,13 @@
     
     "cursor.general.disableHttp2": true,
     "cursor.general.enableShadowWorkspace": true,
+    "cursorpyright.analysis.exclude": [
+        "**/data/**",
+        "**/parquet_data/**",
+        "**/.specstory/**",
+        "docs/**",
+        "log/**"
+    ],
 
     // "emeraldwalk.runonsave": {
     //   "messages": "[ERROR] Run on save - Run jupytext sync failed",
