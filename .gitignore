@@ -214,7 +214,7 @@ pip-selfcheck.json
 .nfs*
 
 ## API Secrets
-secret.json
+secret*.json
 # .env # Already ignored.
 # SpecStory project identity file
 .specstory/.project.json
