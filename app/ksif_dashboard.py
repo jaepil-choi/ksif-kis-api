@@ -12,6 +12,9 @@ import plotly.graph_objects as go
 from datetime import datetime, timedelta
 import random
 
+# Import data service
+from data_service import get_data_service
+
 # Page configuration
 st.set_page_config(
     page_title="KSIF Dashboard",
@@ -142,7 +145,7 @@ def create_sidebar():
 def create_header():
     st.markdown('<div class="main-header">', unsafe_allow_html=True)
     
-    col1, col2, col3, col4 = st.columns([3, 2, 1.5, 1.5])
+    col1, col2, col3, col4, col5 = st.columns([3, 2, 1.5, 1.5, 1])
     
     with col1:
         st.markdown("# 📊 KSIF Dashboard")
@@ -167,49 +170,44 @@ def create_header():
         currencies = ["KRW", "USD", "EUR", "JPY"]
         selected_currency = st.selectbox("💰 Currency", currencies, key="currency_filter")
     
+    with col5:
+        # Refresh button and status
+        st.markdown("##### 🔄 Data")
+        
+        # Get data service instance
+        data_service = get_data_service()
+        
+        # Manual refresh button
+        if st.button("🔄 Refresh", key="manual_refresh", help="Click to refresh all data immediately"):
+            # Trigger data refresh
+            data_service.refresh_all_data(force=True)
+            st.success("Data refreshed!")
+            st.rerun()
+        
+        # Show last update time
+        last_update = data_service.get_last_update()
+        if last_update:
+            st.caption(f"Updated: {last_update.strftime('%H:%M:%S')}")
+        else:
+            st.caption("Not updated yet")
+        
+        # Connection status indicator
+        if data_service.is_connected():
+            st.success("🟢 Connected")
+        else:
+            st.error("🔴 Disconnected")
+    
     st.markdown('</div>', unsafe_allow_html=True)
     
     return date_range, selected_team, selected_currency
 
-# Generate fake data functions
-def generate_position_data():
-    """Generate fake position data - Replace with actual API calls to KIS or database"""
-    positions = [
-        {
-            "Symbol": "Samsung Electronics",
-            "Quantity": 1500,
-            "Price": 72500,
-            "Market_Value": 108750000,
-            "PL": 12500000,
-            "PL_Percent": 13.00
-        },
-        {
-            "Symbol": "SK Hynix", 
-            "Quantity": 800,
-            "Price": 125000,
-            "Market_Value": 100000000,
-            "PL": -5000000,
-            "PL_Percent": -4.76
-        },
-        {
-            "Symbol": "NAVER",
-            "Quantity": 300,
-            "Price": 215000,
-            "Market_Value": 64500000,
-            "PL": 7500000,
-            "PL_Percent": 13.16
-        },
-        {
-            "Symbol": "Kakao",
-            "Quantity": 450,
-            "Price": 58000,
-            "Market_Value": 26100000,
-            "PL": -1800000,
-            "PL_Percent": -6.45
-        }
-    ]
+# Data access functions - now using DataService
+def get_position_data():
+    """Get position data from DataService"""
+    data_service = get_data_service()
+    df = data_service.get_positions_data()
     
-    df = pd.DataFrame(positions)
+    # Format display columns
     df['Price_Formatted'] = df['Price'].apply(lambda x: f"₩{x:,}")
     df['Market_Value_Formatted'] = df['Market_Value'].apply(lambda x: f"₩{x:,}")
     df['PL_Formatted'] = df['PL'].apply(lambda x: f"₩{x:,}")
@@ -217,73 +215,31 @@ def generate_position_data():
     
     return df
 
-def generate_pl_data(period="Daily"):
-    """Generate fake P&L data - Replace with actual trading data"""
-    days = 7 if period == "Daily" else (30 if period == "MTD" else 365)
-    dates = pd.date_range(end=datetime.now(), periods=days, freq='D')
-    
-    # Generate random P&L data with some trend
-    np.random.seed(42)  # For consistent fake data
-    base_return = np.random.normal(0.5, 2.0, days)  # Daily returns in millions
-    cumulative_pl = np.cumsum(base_return) * 1000000  # Convert to actual values
-    
-    return pd.DataFrame({
-        'Date': dates,
-        'PL': cumulative_pl,
-        'Daily_PL': base_return * 1000000
-    })
+def get_balance_data():
+    """Get balance data from DataService"""
+    data_service = get_data_service()
+    return data_service.get_balance_data()
 
-def generate_transaction_data():
-    """Generate fake transaction data - Replace with actual trade history from KIS API"""
-    transactions = []
-    teams = ["Team Alpha", "Team Beta", "Team Gamma"]
-    symbols = ["Samsung Electronics", "SK Hynix", "NAVER", "Kakao", "LG Energy"]
-    transaction_types = ["Buy", "Sell"]
+def get_pl_data(period="Daily"):
+    """Get P&L data from DataService"""
+    data_service = get_data_service()
+    return data_service.get_pl_data(period)
+
+def get_transaction_data():
+    """Get transaction data from DataService"""
+    data_service = get_data_service()
+    df = data_service.get_transactions_data()
     
-    np.random.seed(42)
-    
-    for i in range(20):
-        date = datetime.now() - timedelta(days=random.randint(0, 30))
-        transactions.append({
-            "Date": date.strftime("%Y.%m.%d"),
-            "Time": f"{random.randint(9, 15):02d}:{random.randint(0, 59):02d}",
-            "TX_ID": f"TX{random.randint(100000, 999999)}",
-            "Symbol": random.choice(symbols),
-            "Type": random.choice(transaction_types),
-            "Quantity": random.randint(100, 2000),
-            "Price": random.randint(50000, 300000),
-            "Total": random.randint(10000000, 200000000),
-            "Team": random.choice(teams)
-        })
-    
-    df = pd.DataFrame(transactions)
+    # Format display columns
     df['Price_Formatted'] = df['Price'].apply(lambda x: f"₩{x:,}")
     df['Total_Formatted'] = df['Total'].apply(lambda x: f"₩{x:,}")
     
     return df
 
-def generate_benchmark_data():
-    """Generate fake benchmark comparison data - Replace with actual market index data"""
-    days = 30
-    dates = pd.date_range(end=datetime.now(), periods=days, freq='D')
-    
-    np.random.seed(42)
-    
-    # Generate different performance curves for each benchmark
-    benchmarks = {
-        "Portfolio": np.cumsum(np.random.normal(0.2, 1.2, days)),
-        "KOSPI": np.cumsum(np.random.normal(0.1, 1.0, days)),
-        "KOSPI 200": np.cumsum(np.random.normal(0.08, 0.9, days)),
-        "KOSDAQ": np.cumsum(np.random.normal(0.3, 1.5, days)),
-        "S&P 500": np.cumsum(np.random.normal(0.15, 0.8, days)),
-        "DJIA": np.cumsum(np.random.normal(0.12, 0.7, days)),
-        "USD/KRW": np.cumsum(np.random.normal(-0.05, 0.3, days))
-    }
-    
-    df = pd.DataFrame(benchmarks)
-    df['Date'] = dates
-    
-    return df
+def get_benchmark_data():
+    """Get benchmark data from DataService"""
+    data_service = get_data_service()
+    return data_service.get_benchmark_data()
 
 # Widget components
 def position_summary_widget():
@@ -291,8 +247,9 @@ def position_summary_widget():
     st.markdown("### 💼 Position Summary")
     st.markdown("*Current open positions for All Teams*")
     
-    # TODO: Replace with actual position data from KIS API
-    df = generate_position_data()
+    # Get position data from DataService
+    df = get_position_data()
+    balance_data = get_balance_data()
     
     # Display table
     display_columns = ['Symbol', 'Quantity', 'Price_Formatted', 'Market_Value_Formatted', 'PL_Formatted', 'PL_Percent_Formatted']
@@ -309,19 +266,20 @@ def position_summary_widget():
         }
     )
     
-    # Summary metrics
+    # Summary metrics from balance data
     total_market_value = df['Market_Value'].sum()
     total_pl = df['PL'].sum()
-    total_pl_percent = (total_pl / (total_market_value - total_pl)) * 100
+    total_pl_percent = (total_pl / (total_market_value - total_pl)) * 100 if total_market_value > total_pl else 0
     
     st.markdown("---")
     
     col1, col2 = st.columns(2)
     with col1:
-        st.metric("💰 Available Cash", "₩250,000,000")  # TODO: Replace with actual cash balance
+        available_cash = balance_data.get('available_cash', 250000000)
+        st.metric("💰 Available Cash", f"₩{available_cash:,}")
     
     with col2:
-        total_assets = total_market_value + 250000000  # Cash + Market Value
+        total_assets = balance_data.get('total_assets', total_market_value + available_cash)
         st.metric("📊 Total Assets", f"₩{total_assets:,}")
     
     # Total row
@@ -330,8 +288,7 @@ def position_summary_widget():
     with col1:
         st.metric("Total Market Value", f"₩{total_market_value:,}")
     with col2:
-        pl_color = "normal" if total_pl >= 0 else "inverse"
-        st.metric("Total P&L", f"₩{total_pl:,}", delta=None)
+        st.metric("Total P&L", f"₩{total_pl:,}")
     with col3:
         st.metric("Total P&L %", f"{total_pl_percent:.2f}%")
 
@@ -344,8 +301,8 @@ def pl_report_widget():
     periods = ["Daily", "Weekly", "MTD", "YTD"]
     selected_period = st.radio("Period", periods, horizontal=True, key="pl_period")
     
-    # TODO: Replace with actual P&L data from trading system
-    pl_data = generate_pl_data(selected_period)
+    # Get P&L data from DataService
+    pl_data = get_pl_data(selected_period)
     
     # Main P&L figure
     current_pl = pl_data['Daily_PL'].tail(7).sum()  # Last 7 days
@@ -391,8 +348,8 @@ def transaction_history_widget():
         tx_types = ["All", "Buy", "Sell"]
         selected_type = st.selectbox("Type", tx_types, key="tx_type_filter")
     
-    # TODO: Replace with actual transaction data from KIS API or database
-    df = generate_transaction_data()
+    # Get transaction data from DataService
+    df = get_transaction_data()
     
     # Apply filters
     if search_term:
@@ -402,6 +359,10 @@ def transaction_history_widget():
         df = df[df['Type'] == selected_type]
     
     # Group by date and display
+    if len(df) == 0:
+        st.info("No transactions found matching the current filters.")
+        return
+    
     for date in df['Date'].unique():
         st.markdown(f"**{date}**")
         date_transactions = df[df['Date'] == date]
@@ -431,8 +392,8 @@ def benchmark_comparison_widget():
     st.markdown("### 📊 Benchmark Comparison")
     st.markdown("*Portfolio performance % vs market indices*")
     
-    # TODO: Replace with actual benchmark data from financial data providers
-    df = generate_benchmark_data()
+    # Get benchmark data from DataService
+    df = get_benchmark_data()
     
     # Legend/Filter checkboxes
     benchmarks = ["Portfolio", "KOSPI", "KOSPI 200", "KOSDAQ", "S&P 500", "DJIA", "USD/KRW"]
